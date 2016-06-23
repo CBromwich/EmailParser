@@ -5,6 +5,8 @@
 Dynamically retrieves park hours and EMH from the Disney World website
 */
 
+
+//Dependencies for scraping data
 var request = require("request");
 var cheerio = require("cheerio");
 
