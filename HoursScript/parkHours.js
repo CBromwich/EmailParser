@@ -1,5 +1,6 @@
 //Author: Cody Bromwich
 //Date: 6/23/2016
+//Github url: https://github.com/CBromwich/parkHours
 
 /*
 Dynamically retrieves park hours and EMH from the Disney World website
@@ -14,7 +15,7 @@ var cheerio = require("cheerio");
 var url = "https://disneyworld.disney.go.com/calendars/"; //Disney"s official page for park hours
     
 request(url, function (error, response, html) {
-    "use strict";
+    "use strict"; //so JSLint will stop yelling at me
     
     //if request does not return an error
     if (!error) {
