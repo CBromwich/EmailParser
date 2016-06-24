@@ -1,9 +1,14 @@
 //Author: Cody Bromwich
 //Date: 6/23/2016
-//Github url: https://github.com/CBromwich/parkHours
+//Github url: https://github.com/CBromwich/parkHours 
 
 /*
 Dynamically retrieves park hours and EMH from the Disney World website
+
+TODO: 
+ - Information currently only prints in console. Rework to return values instead of print them
+ - Wrap in sharepoint API
+      
 */
 
 
@@ -23,7 +28,7 @@ request(url, function (error, response, html) {
         
         //filter() creates a subset of the DOM using only the matching selectors (.clickRow in this case)
         $(".clickRow").filter(function() { 
-            var data = $(this).children(); // data is the .clickRow object in the DOM
+            var data = $(this).children(); // data is the children of the .clickRow object in the DOM
             
             var name = data.first().text(); // get first child of .clickRow, park name
             var hours = data.eq(1).text(); // Get second child of .clickRow (index from 0), hours
