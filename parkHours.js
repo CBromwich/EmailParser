@@ -1,6 +1,6 @@
 //Author: Cody Bromwich
 //Date: 6/23/2016
-//Github url: https://github.com/CBromwich/parkHours
+//Github url: https://github.com/CBromwich/parkHours 
 
 /*
 Dynamically retrieves park hours and EMH from the Disney World website
