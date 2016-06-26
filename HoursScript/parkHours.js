@@ -6,6 +6,9 @@
 
 Dynamically retrieves park hours and EMH from the Disney World website
 
+Output: 
+Data is stored in a 2D array dataList in format [[name, hours, emh]] for each .clickRow object
+
 */
 
 
