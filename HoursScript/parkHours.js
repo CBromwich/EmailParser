@@ -20,7 +20,6 @@ var dataList = []; //Multidimensional array to hold arrays of each park field (P
 request(url, function (error, response, html) {
     "use strict"; //so JSLint will stop yelling at me
     
-    //if request does not return an error
     if (!error) {
         var $ = cheerio.load(html);
         
