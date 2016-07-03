@@ -49,9 +49,6 @@ try:
                     fp = open(filePath, 'wb')
                     fp.write(part.get_payload(decode=True))
                     fp.close()
-                    
-            imapSession.store(msgId, '+FLAGS', '\\Deleted')
-            imapSession.expunge()
     imapSession.close()
     imapSession.logout()
 except :
