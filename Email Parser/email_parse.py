@@ -1,76 +1,55 @@
+# Something in lines of http://stackoverflow.com/questions/348630/how-can-i-download-all-emails-with-attachments-from-gmail
+# Make sure you have IMAP enabled in your gmail settings.
+# Right now it won't download same file name twice even if their contents are different.
+
 import email
-import imaplib
+import getpass, imaplib
 import os
+import sys
 
-class FetchEmail():
+detach_dir = '.'
+if 'attachments' not in os.listdir(detach_dir):
+    os.mkdir('attachments')
 
-    connection = None
-    error = None
+userName = raw_input('Enter your GMail username:')
+passwd = getpass.getpass('Enter your password: ')
 
-    def __init__(self, mail_server, username, password):
-        self.connection = imaplib.IMAP4_SSL(mail_server)
-        self.connection.login(username, password)
-        self.connection.select(readonly=False) # so we can mark mails as read
+try:
+    imapSession = imaplib.IMAP4_SSL('imap.gmail.com')
+    typ, accountDetails = imapSession.login(userName, passwd)
+    if typ != 'OK':
+        print 'Not able to sign in!'
+    
+    imapSession.select('[Gmail]/All Mail')
+    typ, data = imapSession.search(None, 'FROM', 'CODY J')
+    if typ != 'OK':
+        print 'Error searching Inbox.'
+    
+    # Iterating over all emails
+    for msgId in data[0].split():
+        typ, messageParts = imapSession.fetch(msgId, '(RFC822)')
+        if typ != 'OK':
+            print 'Error fetching mail.'
 
-    def close_connection(self):
-        """
-        Close the connection to the IMAP server
-        """
-        self.connection.close()
-
-    def save_attachment(self, msg, download_folder="."):
-        """
-        Given a message, save its attachments to the specified
-        download folder (default is /tmp)
-
-        return: file path to attachment
-        """
-        att_path = "No attachment found."
-        for part in msg.walk():
+        emailBody = messageParts[0][1]
+        mail = email.message_from_string(emailBody)
+        for part in mail.walk():
             if part.get_content_maintype() == 'multipart':
+                # print part.as_string()
                 continue
             if part.get('Content-Disposition') is None:
+                # print part.as_string()
                 continue
-            
+            fileName = part.get_filename()
 
-            filename = part.get_filename()
-            att_path = os.path.join(download_folder, filename)
-
-            if not os.path.isfile(att_path):
-                fp = open(att_path, 'wb')
-                fp.write(part.get_payload(decode=True))
-                fp.close()
-        return att_path
-
-    def fetch_unread_messages(self):
-        """
-        Retrieve unread messages
-        """
-        emails = []
-        (result, messages) = self.connection.search(None, 'FROM', 'Cody J')
-        if result == "OK":
-            for message in messages[0].split(' '):
-                try: 
-                    ret, data = self.connection.fetch(message,'(RFC822)')
-                except:
-                    print "No new emails to read."
-                    self.close_connection()
-                    exit()
-
-                msg = email.message_from_string(data[0][1])
-                if isinstance(msg, str) == False:
-                    emails.append(msg)
-                #response, data = self.connection.store(message, '+FLAGS','\\Seen')
-
-            return emails
-
-        self.error = "Failed to retreive emails."
-        return emails
-
-    def parse_email_address(self, email_address):
-        """
-        Helper function to parse out the email address from the message
-
-        return: tuple (name, address). Eg. ('John Doe', 'jdoe@example.com')
-        """
-        return email.utils.parseaddr(email_address)
+            if bool(fileName):
+                filePath = os.path.join(detach_dir, 'attachments', fileName)
+                if not os.path.isfile(filePath) :
+                    print fileName
+                    fp = open(filePath, 'wb')
+                    fp.write(part.get_payload(decode=True))
+                    fp.close()
+    imapSession.close()
+    imapSession.logout()
+except :
+    print 'Not able to download all attachments.'
